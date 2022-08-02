@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "UserManagement";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+<h1>UserManagement</h1>
+
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>ıd</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Email</th>
+            <th>Numara</th>
+            <th>Düzenle</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/plugins/jszip/jszip.min.js"></script>
+<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    var table =   $("#example1").DataTable({
+       ajax: {
+              url: "/User/UserManagementGetList",
+              type: "POST",
+            },
+      serverSide: true,
+      filter: true,
+      processing: true,
+      columnDefs: [{
+              "targets": [0],
+              "visible": false,
+              "searchable": false
+          }],
+      columns: [
+          { data: "id", name: "Id" },
+          { data: "name", name: "Name" },
+          { data: "surname", name: "Surname" },
+          { data: "email", name: "Email" },
+          { data: "phoneNumber", name: "PhoneNumber" },
+          {
+               "data": "id",
+                  "render": function (data,type,row) { return "<a href='#' class='btn btn-outline-danger' onclick=updatebtn('" + row.id+ "'); ><i class='fas fa-edit'></i> Düzenle</a>";   }
+          },
+
+
+
+      ],
+        responsive: true, "lengthChange": false, "autoWidth": false,
+        dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
+        buttons: ['copy', 'excel', 'pdf']
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+</script>
+
+
+<script type="text/javascript">
+      function updatebtn(id) {
+          async function postData(url = '', data = {}) {
+      const response = await fetch(url, {
+
+        method: 'POST',
+        headers: {
+                'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    }
+     postData('/User/GetUserDetailWithId/', { Id: id })
+      .then(data => {
+        console.log(data);
+
+          Swal.fire({
+          title: "<strong>Kullanıcı Düzenle</strong>",
+          icon: "info",
+          html: `
+          <form id="userupdate">
+          <input type="hidden" name="id" value="${data.id}">
+            <div class="form-row" style="margin:0 !important">
+                <div class="form-group col-md-6">
+                    <label for="Name">Ad</label>
+                    <input id="Name" name="Name" value="${data.name}" type="text" class="form-control" required="required">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Surname">Soyad</label>
+                    <input id="Surname" name="Surname" value="${data.surname}" type="text" class="form-control" required="required">
+                </div>
+            </div>
+
+            <div class="form-group col-md-12">
+                 <label for="Email">Email</label>
+                <input id="Email" name="Email" value="${data.email}" type="text" class="form-control" required="required">
+            </div>
+
+             <div class="form-group col-md-12">
+                 <label for="Phone">Numara</label>
+                <input id="Phone" name="Phone" value="${data.phoneNumber}" type="text" class="form-control" required="required">
+            </div>
+             <div class="form-group col-md-12">
+                 <label for="Password">Şifre</label>
+                <input id="Password" name="Password" value="" type="text" class="form-control" required="required">
+            </div>
+
+              </form>
+                `,
+          showCloseButton: true,
+          showCancelButton: true,
+          focusConfirm: false,
+          confirmButtonText: "Kaydet",
+          confirmButtonAriaLabel: "Thumbs up, great!",
+          cancelButtonText: "İptal",
+          cancelButtonAriaLabel: "Thumbs down",
+        });
+
+
+            $(".swal2-confirm").click(()=>{
+                $.ajax({
+                    method:"POST",
+                    url:"/User/UpdateUser/",
+                    data:$("#userupdate").serialize()
+                }).done((e)=> {
+                    if(e==true){
+                        setTimeout(function(){location.reload()}, 1000);
+                    }else{
+                          Swal.fire(
+                            'HATA !',
+                            'Kullanıcı bilgisi güncellenemedi',
+                            'error',
+                        );
+                    }
+                })
+            })
+      });
+
+      }
+</script>

@@ -1,0 +1,83 @@
+﻿@model TeknikServisTakip.Models.UserAddViewModel
+@{
+    ViewData["Title"] = "AddUser";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if (ViewBag.State != null)
+{
+    @if (ViewBag.State == true)
+    {
+        <script>
+            Swal.fire(
+              'Başarılı',
+              'Kullanıcı başarıyla oluşturuldu',
+              'success'
+            )
+        </script>
+    }
+    else
+    {
+        <script>
+            Swal.fire(
+              'Hata',
+              'Kullanıcı oluşturulamadı !',
+              'error'
+            )
+        </script>
+    }
+
+}
+
+<form action="/User/AddUser" method="post">
+    <div class="form-group row">
+        <label for="text1" class="col-2 col-form-label">Ad</label>
+        <div class="col-8">
+            @Html.TextBoxFor(x=>x.Name , new {@class="form-control"})
+            @Html.ValidationMessageFor(x=>x.Name,"",new{@class="text-danger"})
+        </div>
+
+    </div>
+    <div class="form-group row">
+        <label for="text2" class="col-2 col-form-label">Soyad</label>
+        <div class="col-8">
+            @Html.TextBoxFor(x=>x.Surname, new{@class="form-control"})
+            @Html.ValidationMessageFor(x=>x.Surname,"",new{@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="text3" class="col-2 col-form-label">Email</label>
+        <div class="col-8">
+            @Html.TextBoxFor(x=>x.Email,new{@class="form-control"})
+            @Html.ValidationMessageFor(x=>x.Email,"",new{@class="text-danger"})
+        </div>
+
+    </div>
+    <div class="form-group row">
+        <label for="text4" class="col-2 col-form-label">Kullanıcı Adı</label>
+        <div class="col-8">
+            @Html.TextBoxFor(x=>x.Username,new{@class="form-control"})
+            @Html.ValidationMessageFor(x=>x.Username,"",new{@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="text5" class="col-2 col-form-label">Şifre</label>
+        <div class="col-8">
+            @Html.TextBoxFor(x=>x.Password,new{@class="form-control"})
+            @Html.ValidationMessageFor(x=>x.Password,"",new{@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="text6" class="col-2 col-form-label">Telefon Numarası</label>
+        <div class="col-8">
+            @Html.TextBoxFor(x=>x.Phone,new{@class="form-control"})
+            @Html.ValidationMessageFor(x=>x.Phone,"",new{@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="offset-2 col-8">
+            <button name="submit" type="submit" class="btn btn-primary">Kullanıcıyı Kaydet</button>
+        </div>
+    </div>
+</form>

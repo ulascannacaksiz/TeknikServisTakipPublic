@@ -1,0 +1,255 @@
+﻿@using EntityLayer.Concrete
+@model List<Serviceproduct>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+
+<style>
+    .left-col {
+        float: left;
+        width: 25%;
+    }
+
+    .center-col {
+        float: left;
+        width: 50%;
+    }
+
+    .right-col {
+        float: right;
+        width: 25%;
+    }
+</style>
+
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Servis Ürün Listesi</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table id="example1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Marka</th>
+                    <th>Model</th>
+                    <th>Sahibi</th>
+                    <th>Sorun</th>
+                    <th>Durum</th>
+                    <th>Ücret</th>
+                    <th>Geliş tarihi</th>
+                    <th>Son işlem tarihi</th>
+                    <th>Düzenle</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- /.card-body -->
+</div>
+
+
+
+
+<script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/plugins/jszip/jszip.min.js"></script>
+<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+<script>
+        /*
+    {
+        "0": {
+            "id": 1,
+            "customerId": 2,
+            "customer": {
+                "customerId": 2,
+                "customerName": "ALI HASAN",
+                "customerSurname": "ZUBAROGLU",
+                "customerPhone": "545 358 18 55",
+                "customerEmail": "ali hasanzubaroglu@charter.net",
+                "address": "Üsküdar",
+                "districtId": 34,
+                "district": null
+            },
+            "brand": "deneme",
+            "model": "deneme",
+            "problem": "eewe",
+            "notes": "wefewr",
+            "price": 23,
+            "servicestatusId": 2,
+            "servicestatus": {
+                "id": 2,
+                "statusName": "Servise Atandı"
+            },
+            "lastModifedDate": "2022-07-05T13:24:26.8865699",
+            "createDate": "2022-07-05T13:24:14.3918694",
+            "uniqeId": null
+        }
+    }    */
+        var table = $("#example1").DataTable({
+           ajax: {
+                  url: "/ServiceProduct/MyCustomerList",
+                  type: "POST",
+                },
+          serverSide: true,
+          filter: true,
+          processing: true,
+          columnDefs: [{
+                  "targets": [0],
+                  "visible": false,
+                  "searchable": false
+              }],
+          columns: [
+              { data: "id", name: "Id" },
+              { data: "brand", name: "Brand" },
+              { data: "model", name: "Model" },
+              //{ data: "customer.customerName", name: "CustomerName" },
+               {
+                   "data": "customer",
+                   "name": "CustomerName",
+                   "render": function (data,type,row) { return "" + row.customer.customerName +" "+row.customer.customerSurname + "";  }
+              },
+              { data: "problem", name: "Problem" },
+              { data: "servicestatus.statusName", name: "StatusName" },
+              { data: "price", name: "Price" },
+              { data: "createDate", name: "CreateDate" },
+              { data: "lastModifedDate", name: "LastModifedDate" },
+              {
+                   "data": "id",
+                   "render": function (data,type,row) { return "<a href='#' class='btn btn-outline-danger' onclick=updatebtn('" + row.id+ "'); ><i class='fas fa-edit'></i> Düzenle</a>";   }
+              },
+
+
+
+          ],
+            responsive: true, "lengthChange": false, "autoWidth": false,
+            dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
+            buttons: ['copy', 'excel', 'pdf']
+          }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+</script>
+
+
+
+<script type="text/javascript">
+      function updatebtn(id) {
+          async function postData(url = '', data = {}) {
+      const response = await fetch(url, {
+
+        method: 'POST',
+        headers: {
+                'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    }
+     postData('GetProductDetailWithId/', { Id: id })
+      .then(data => {
+        console.log(data);
+
+          Swal.fire({
+          title: "<strong>Servis Ürün Düzenle</strong>",
+          icon: "info",
+          html: `
+          <form id="productupdate">
+          <input type="hidden" name="Id" value="${data.product[0].id}">
+            <div class="form-row" style="margin:0 !important">
+                <div class="form-group col-md-6">
+                    <label for="Brand">Marka</label>
+                    <input id="Brand" name="Brand" value="${data.product[0].brand}" type="text" class="form-control" required="required">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="Model">Model</label>
+                    <input id="Model" name="Model" value="${data.product[0].model}" type="text" class="form-control" required="required">
+                </div>
+            </div>
+
+                <div class="form-group col-md-12">
+                    <label for="CustomerId">Sahibi</label>
+                    <select class="form-control" id="customerSelect" name="CustomerId">
+                    <option value="0">Seçiniz</option>
+                    </select>
+                </div>
+
+
+            <div class="form-group col-md-12">
+                <label for="Problem">Sorun</label>
+                <textarea id="Problem" name="Problem" cols="40" rows="4" class="form-control">${data.product[0].problem}</textarea>
+            </div>
+            <div class="form-group col-md-12">
+                 <label for="Price">Ücret</label>
+                <input id="Price" name="Price" value="${data.product[0].price}" type="text" class="form-control" required="required">
+            </div>
+
+                <div class="form-group col-md-12">
+                    <label for="ServicestatusId">Durum</label>
+                    <select class="form-control" id="statusSelect" name="ServicestatusId">
+                        <option value="${data.product[0].servicestatus.id}">${data.product[0].servicestatus.statusName}</option>
+                    </select>
+                </div>
+            <div class="form-group col-md-12">
+                <label for="Notes">Notlar</label>
+                <textarea id="Notes" name="Notes" cols="40" rows="4" class="form-control">${data.product[0].notes}</textarea>
+            </div>
+
+
+              </form>
+                `,
+          showCloseButton: true,
+          showCancelButton: true,
+          focusConfirm: false,
+          confirmButtonText: "Kaydet",
+          confirmButtonAriaLabel: "Thumbs up, great!",
+          cancelButtonText: "İptal",
+          cancelButtonAriaLabel: "Thumbs down",
+        });
+
+          let optionList=`<option value="${data.product[0].customer.customerId}">${data.product[0].customer.customerName} ${data.product[0].customer.customerSurname}</option>`;
+           $.each(data.customer,function(index,item){
+              optionList+= `<option value="${item.customerId}">${item.customerName} ${item.customerSurname}</option>`;
+           })
+            $("#customerSelect").html(optionList);
+
+
+
+           let statusList=`<option value="${data.product[0].servicestatus.id}">${data.product[0].servicestatus.statusName}</option>`;
+           $.each(data.status,function(index,item){
+              statusList+= `<option value="${item.id}">${item.statusName}</option>`;
+           })
+            $("#statusSelect").html(statusList);
+
+            $(".swal2-confirm").click(()=>{
+                $.ajax({
+                    method:"POST",
+                    url:"UpdateProduct/",
+                    data:$("#productupdate").serialize()
+                })
+            })
+      });
+
+      }
+</script>

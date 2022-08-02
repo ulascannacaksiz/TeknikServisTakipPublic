@@ -1,0 +1,196 @@
+﻿@using EntityLayer.Concrete
+@model List<Customer>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+
+<style>
+.left-col {
+    float: left;
+    width: 25%;
+}
+ 
+.center-col {
+    float: left;
+    width: 50%;
+}
+ 
+.right-col {
+    float: right;
+    width: 25%;
+}
+</style>
+
+
+
+
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Telefon</th>
+            <th>Email</th>
+            <th>Adres</th>
+            <th>Düzenle</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/plugins/jszip/jszip.min.js"></script>
+<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+<script>
+  var table =   $("#example1").DataTable({
+     ajax: {
+            url: "/Customer/MyCustomerList",
+            type: "POST",
+          },
+    serverSide: true,
+    filter: true,
+    processing: true,
+    columnDefs: [{
+            "targets": [0],
+            "visible": false,
+            "searchable": false
+        }],
+    columns: [
+        { data: "customerId", name: "CustomerId" },
+        { data: "customerName", name: "CustomerName" },
+        { data: "customerSurname", name: "CustomerSurname" },
+        { data: "customerPhone", name: "CustomerPhone" },
+        { data: "customerEmail", name: "CustomerEmail" },
+        { data: "address", name: "Address" },
+        {
+             "data": "customerId",  
+                "render": function (data,type,row) { return "<a href='#' class='btn btn-outline-danger' onclick=userUpdate('" + row.customerId+ "'); ><i class='fas fa-edit'></i> Düzenle</a>";   }
+        },
+
+         
+        
+    ],
+      responsive: true, "lengthChange": false, "autoWidth": false,
+      dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
+      buttons: ['copy', 'excel', 'pdf']
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    
+</script>
+
+
+<script type="text/javascript">
+      function userUpdate(id) {
+          async function postData(url = '', data = {}) {
+      const response = await fetch(url, {
+
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+                'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    }
+     postData('GetUserById/', { CustomerId: id })
+      .then(data => {
+        //console.log(data);
+
+            Swal.fire({
+          title: "<strong>Kullanıcı Düzenle</strong>",
+          icon: "info",
+
+          html: `
+          <form id="userupdate">
+          <input type="hidden" name="CustomerId" value="${data.user.customerId}">
+            <div class="form-row" style="margin:0 !important">
+                <div class="form-group col-md-6">
+                    <label for="CustomerName">Ad</label>
+                    <input id="CustomerName" name="CustomerName" value="${data.user.customerName}" type="text" class="form-control" required="required">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="CustomerSurname">Soyad</label>
+                    <input id="CustomerSurname" name="CustomerSurname" value="${data.user.customerSurname}" type="text" class="form-control" required="required">
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <label for="CustomerPhone">Telefon</label>
+                <input id="CustomerPhone" name="CustomerPhone" value="${data.user.customerPhone}" type="text" class="form-control">
+            </div>
+            <div class="form-group col-md-12">
+                 <label for="CustomerEmail">Email</label>
+                <input id="CustomerEmail" name="CustomerEmail" value="${data.user.customerEmail}" type="text" class="form-control" required="required">
+            </div>
+                    <div class="form-row" style="margin:0 !important">
+                <div class="form-group col-md-6">
+                    <label for="CustomerName">İl</label>
+                    <select class="form-control" id="iller" name="Province">
+                        <option value="${data.selectedCity.id}">${data.selectedCity.cityName}</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="CustomerSurname">İlçe</label>
+                    <select class="form-control" id="ilceler" name="DistrictId">
+                       <option value="${data.selectedDiscrint.id}">${data.selectedDiscrint.provinceName}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                <label for="textarea">Adres</label>
+                <textarea id="textarea" name="Address" cols="40" rows="4" class="form-control">${data.user.address}</textarea>
+            </div></form>
+                `,
+          showCloseButton: true,
+          showCancelButton: true,
+          focusConfirm: false,
+          confirmButtonText: "Kaydet",
+          confirmButtonAriaLabel: "Thumbs up, great!",
+          cancelButtonText: "İptal",
+          cancelButtonAriaLabel: "Thumbs down",
+        });
+            let optionList=`<option value="${data.selectedCity.id}">${data.selectedCity.cityName}</option>`;
+           $.each(data.cities,function(index,item){
+              optionList+= `<option value="${item.id}">${item.cityName}</option>`;
+           })
+            $("#iller").html(optionList);
+
+
+            let optionListilce=`<option value="${data.selectedDiscrint.id}">${data.selectedDiscrint.provinceName}</option>`;
+           $.each(data.cityDistrict,function(index,item){
+              optionListilce+= `<option value="${item.id}">${item.provinceName}</option>`;
+           })
+            $("#ilceler").html(optionListilce);
+
+            $(".swal2-confirm").click(()=>{
+               $.ajax({
+                   method:"Post",
+                   url: "CustomerUpdate/",
+                   data:$("#userupdate").serialize()
+               })
+            })
+      });
+
+      }
+</script>

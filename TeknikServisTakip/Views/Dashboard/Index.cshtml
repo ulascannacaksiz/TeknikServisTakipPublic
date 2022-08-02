@@ -1,0 +1,165 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+<style>
+.left-col {
+    float: left;
+    width: 25%;
+}
+ 
+.center-col {
+    float: left;
+    width: 50%;
+}
+ 
+.right-col {
+    float: right;
+    width: 25%;
+}
+</style>
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-clock"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Onarım Bekleyen</span>
+                <span class="info-box-number">
+                    10
+                    <small>%</small>
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Onarımı Devam Eden</span>
+                <span class="info-box-number">41,410</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <!-- fix for small devices only -->
+    <div class="clearfix hidden-md-up"></div>
+
+    <div class="col-12 col-sm-6 col-md-4">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Onarımı Tamamlanan</span>
+                <span class="info-box-number">760</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+
+</div>
+<div class="row">
+    <table class="table table-bordered">
+        <tr>
+            <th>Cihaz</th>
+            <th>Şikayet</th>
+            <th>Tarih</th>
+        </tr>
+        <tr>
+            <td>Asus</td>
+            <td>Deneme</td>
+            <td>Deneme</td>
+        </tr>
+    </table>
+</div>
+
+<div class="card ">
+    <div class="card-header bg-info">
+        Bana atanmış cihazlar
+    </div>
+    @*    <div class="card-body">
+        <table class="table table-bordered" id="feef">
+        <tr>
+        <th>Cihaz</th>
+        <th>Model</th>
+        <th>Durum</th>
+        <th>Son işlem Tarih</th>
+        <th>Detaylar</th>
+        </tr>
+        @foreach (var item in ViewBag.atanan)
+        {
+        <tr>
+        <td>@item.Serviceproduct.Brand</td>
+        <td>@item.Serviceproduct.Model</td>
+        <td>@item.Serviceproduct.Servicestatus.StatusName</td>
+        <td>@item.Serviceproduct.LastModifedDate</td>
+        <td><button class="btn btn-info">Detay</button></td>
+        </tr>
+        }
+
+        </table>
+
+        </div>*@
+
+    <table id="example1" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>StatusName</th>
+                <th>LastModifedDate</th>
+            </tr>
+        </thead>
+        <tbody>
+       
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Bootstrap 4 -->
+<script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="~/plugins/jszip/jszip.min.js"></script>
+<script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+
+<script>
+    $("#example1").DataTable({
+     ajax: {
+            url: "/Dashboard/MyProductList",
+            type: "POST",
+          },
+    serverSide: true,
+    filter: true,
+    processing: true,
+    columns: [
+        { data: "serviceproduct.brand", name: "Brand" },
+        { data: "serviceproduct.model", name: "Model" },
+        { data: "serviceproduct.servicestatus.statusName", name: "StatusName" },
+        { data: "serviceproduct.lastModifedDate", name: "LastModifedDate" },
+    ],
+      responsive: true, "lengthChange": false, "autoWidth": false,
+      dom: '<"top"<"left-col"B><"center-col"l><"right-col"f>>rtip',
+      buttons: ['copy', 'excel', 'pdf']
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+</script>

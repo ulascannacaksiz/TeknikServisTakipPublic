@@ -1,0 +1,120 @@
+﻿@model EntityLayer.Concrete.Customer
+@{
+    ViewData["Title"] = "CustomerAdd";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+
+
+<form method="post">
+    <div class="form-group row">
+        <label for="CustomerName" class="col-2 col-form-label">Müşteri Adı</label>
+        <div class="col-8">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="fa fa-address-card"></i>
+                    </div>
+                </div>
+                <input id="CustomerName" name="CustomerName" type="text" class="form-control" required="required">
+            </div>
+            @Html.ValidationMessageFor(x=>x.CustomerName,"",new {@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="CustomerSurname" class="col-2 col-form-label">Müşteri Soyadı</label>
+        <div class="col-8">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="fa fa-address-book"></i>
+                    </div>
+                </div>
+                <input id="CustomerSurname" name="CustomerSurname" type="text" class="form-control" required="required">
+               
+            </div>
+             @Html.ValidationMessageFor(x=>x.CustomerSurname,"",new {@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="CustomerPhone" class="col-2 col-form-label">Telefon</label>
+        <div class="col-8">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="fa fa-phone-square"></i>
+                    </div>
+                </div>
+                <input id="CustomerPhone" name="CustomerPhone" type="text" class="form-control">
+                
+            </div>
+            @Html.ValidationMessageFor(x=>x.CustomerPhone,"",new {@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="CustomerEmail" class="col-2 col-form-label">Email</label>
+        <div class="col-8">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="fa fa-at"></i>
+                    </div>
+                </div>
+                <input id="CustomerEmail" name="CustomerEmail" type="text" class="form-control" required="required">
+               
+            </div>
+             @Html.ValidationMessageFor(x=>x.CustomerEmail,"",new {@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="Province" class="col-2 col-form-label">İl</label>
+        <div class="col-8">
+            <select id="Province" name="Province" class="custom-select" required="required">
+                <option value="0">Seçiniz</option>
+                @foreach (var item in ViewBag.City)
+                {
+                    <option value="@item.Id">@item.CityName</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="select" class="col-2 col-form-label">İlçe</label>
+        <div class="col-8">
+            <select id="district" name="DistrictId" class="custom-select" required="required">
+                <option value="0">Seçiniz</option>
+
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="textarea" class="col-2 col-form-label">Adres</label>
+        <div class="col-8">
+            <textarea id="textarea" name="Address" cols="40" rows="4" class="form-control"></textarea><br />
+            @Html.ValidationMessageFor(x=>x.Address,"",new {@class="text-danger"})
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="offset-2 col-8">
+            <button name="submit" type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+    </div>
+</form>
+
+<script>
+
+
+    $('#Province').on('change', function() {
+         let id = this.value
+         let ilceler="";
+        $.ajax({
+            url:"/Customer/GetDistiric/"+id,
+            method:"GET"
+        }).done((result)=>{
+           var options="<option>Seçiniz</option>";
+            $.each(result,function(index,item){
+               options+=`<option value="${item.id}">${item.provinceName}</option>`;
+            })
+            $("#district").html(options);
+        })
+    });
+</script>

@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["Title"] = "AddProduct";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<form method="post">
+    <div class="form-group row">
+        <label for="brand" class="col-2 col-form-label">Marka</label>
+        <div class="col-8">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="fa fa-address-card"></i>
+                    </div>
+                </div>
+                <input id="brand" name="Brand" placeholder="Marka" type="text" class="form-control" required="required">
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="Model" class="col-2 col-form-label">Model</label>
+        <div class="col-8">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="fab fa-apple"></i>
+                    </div>
+                </div>
+                <input id="Model" name="Model" placeholder="Model" type="text" class="form-control" required="required">
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="owner" class="col-2 col-form-label">Sahibi</label>
+        <div class="col-8">
+            <select id="owner" name="CustomerId" class="custom-select" data-live-search="true" style="height:550px">
+                <option>Seçin</option>
+                @foreach (var item in ViewBag.customers)
+                {
+                    <option value="@item.CustomerId" data-tokens="@item.CustomerName @item.CustomerSurname">@item.CustomerName @item.CustomerSurname </option>
+                }
+
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="problem" class="col-2 col-form-label">Problem</label>
+        <div class="col-8">
+            <textarea id="problem" name="Problem" cols="40" rows="5" class="form-control" required="required"></textarea>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="Notes" class="col-2 col-form-label">Notlar</label>
+        <div class="col-8">
+            <textarea id="Notes" name="Notes" cols="40" rows="5" class="form-control"></textarea>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="price" class="col-2 col-form-label">Ücret</label>
+        <div class="col-8">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+                <input id="price" name="Price" type="text" class="form-control" required="required">
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="ServicesStatus" class="col-2 col-form-label">Durumu</label>
+        <div class="col-8">
+            <select id="ServicesStatus" name="ServicestatusId" class="custom-select">
+                @foreach (var item in ViewBag.status)
+                {
+                    <option value="@item.Id" data-tokens="@item.StatusName">@item.StatusName </option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="offset-2 col-8">
+            <button name="submit" type="submit" class="btn btn-primary">Ürünü Kayıt Et</button>
+        </div>
+    </div>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+
+        $(document).ready(function() {
+            $('#owner').select2();
+
+        });
+</script>

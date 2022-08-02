@@ -1,0 +1,103 @@
+﻿@using EntityLayer.Concrete
+@model List<Servicestatus>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_IndexLayout.cshtml";
+}
+<div class="col-md-12 mb-2">
+    <button class="btn btn-info" id="addStatus"><i class="fas fa-plus"></i> Ekle</button>
+</div>
+<div class="col-md-12">
+    <table class="table table-bordered">
+        <tr>
+            <th>#</th>
+            <th>Durum</th>
+            <th style="width:200px">Düzenle</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.StatusName</td>
+                <td> <button class="btn btn-warning" onclick="editStatus(@item.Id)"><i class="fas fa-edit"></i> Düzenle</button></td>
+            </tr>
+        }
+
+    </table>
+</div>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+         function AjaxReq(data,url){
+              $.ajax({
+                 url: url,
+                 method:"POST",
+                 data:data,
+                 success: function (){
+                     location.reload();
+                 }
+
+             });
+         }
+
+    function editStatus(id){
+       fetch('GetStatusById/', {
+         method: "POST",
+         body: JSON.stringify({"id":id}),
+         headers: {"Content-type": "application/json; charset=UTF-8"}
+       })
+       .then(response => response.json())
+       .then(json =>{
+               Swal.fire({
+           title: "<strong>Servis Durum Düzenle</strong>",
+           icon: "info",
+           html: `
+           <form id="statusupdate">
+           <input type="hidden" name="Id" value="${json.id}">
+               <div class="form-group col-md-12">
+                     <label for="StatusName">Durum</label>
+                   <input id="StatusName" name="StatusName" value="${json.statusName}" type="text" class="form-control" required="required">
+               </div>
+               </form>
+               `,
+           showCloseButton: true,
+           showCancelButton: true,
+           confirmButtonText: "Kaydet",
+           cancelButtonText: "İptal"
+         })
+
+        $(".swal2-confirm").click(()=>{
+          AjaxReq( $("#statusupdate").serialize(),"UpdateStatus/")
+        })
+
+       });
+
+
+    }
+
+    $("#addStatus").click(()=>{
+                    Swal.fire({
+           title: "<strong>Servis Durum Ekle</strong>",
+           icon: "info",
+           html: `
+           <form id="statusadd">
+
+               <div class="form-group col-md-12">
+                     <label for="StatusName">Durum</label>
+                   <input id="StatusName" name="StatusName" type="text" class="form-control" required="required">
+               </div>
+               </form>
+               `,
+           showCloseButton: true,
+           showCancelButton: true,
+           confirmButtonText: "Kaydet",
+           cancelButtonText: "İptal"
+         })
+
+        $(".swal2-confirm").click(()=>{
+          AjaxReq( $("#statusadd").serialize(),"UpdateStatus/")
+        })
+    })
+
+</script>

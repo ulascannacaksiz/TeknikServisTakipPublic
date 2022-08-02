@@ -1,0 +1,112 @@
+﻿@using EntityLayer.Concrete
+@model List<Serviceproduct>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Log in</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div class="login-logo">
+            <h4>Ürün Sorgulama</h4>
+        </div>
+        <!-- /.login-logo -->
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Ürün sorgulamak için email adresinizi <br />ve takip numarasını girin</p>
+
+                <form id="frmSogurla" action="/GetProduct/getProductDetail/" method="post">
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Email" name="Customer.CustomerEmail">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Takip numarası" name="UniqeId">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="social-auth-links text-center mb-3">
+                        <div class="g-recaptcha" data-sitekey="@ViewBag.SiteKey"></div>
+                        @TempData["Message"]
+                    </div>
+                    <div class="row">
+
+                        <div class="col-12">
+                            <input type="submit" class="btn btn-primary btn-block">
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+
+
+                <!-- /.social-auth-links -->
+
+            </div>
+            <!-- /.login-card-body -->
+        </div>
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+
+</body>
+
+</html>
+
+@*<script>
+    $("#frmSogurla").submit(()=>{
+    $.ajax({
+    method:"Post",
+    data:$("#frmSogurla").serialize(),
+    url:"/GetProduct/getProductDetail/"
+    }).done((e)=>{
+    console.log(e)
+    Swal.fire({
+    title: '<strong>HTML <u>example</u></strong>',
+    icon: 'info',
+    html:
+    'You can use <b>bold text</b>, ' +
+    '<a href="//sweetalert2.github.io">links</a> ' +
+    'and other HTML tags',
+    showCloseButton: true,
+    showCancelButton: true,
+    focusConfirm: false,
+    confirmButtonText:
+    '<i class="fa fa-thumbs-up"></i> Great!',
+    confirmButtonAriaLabel: 'Thumbs up, great!',
+    cancelButtonText:
+    '<i class="fa fa-thumbs-down"></i>',
+    cancelButtonAriaLabel: 'Thumbs down'
+    })
+    })
+    return false;
+    })
+    </script>*@
